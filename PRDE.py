@@ -7,18 +7,6 @@ import os
 
 from BSE import market_session
 
-# Initial Setup:
-# Import all the libraries we need
-
-import matplotlib.pyplot as plt
-import numpy as np
-import csv
-import math
-import random
-import os
-
-from BSE import market_session
-
 # The next are helper functions that you will use later, if they don't make 
 # much sense now, don't worry too much about it they will become clearer later:
 
@@ -155,6 +143,7 @@ def plot_offset_fn(offset_fn, total_time_seconds):
         offsets.append(offset_fn(i))
     plt.plot(x, offsets, 'x', color='black')  
 
+
 def main():
     n_days = 1.0 # 1000 days is good, but 3*365=1095, so may as well go for three years.
     start_time = 0.0
@@ -170,7 +159,7 @@ def main():
     sup_range = (50, 190, schedule_offsetfn)
     dem_range = (200, 300, schedule_offsetfn)
 
-    plot_sup_dem(10, [sup_range], 10, [dem_range], 'fixed')
+    # plot_sup_dem(10, [sup_range], 10, [dem_range], 'fixed')
 
     # Next, configure order schedules
     supply_schedule = [{'from': start_time, 'to': end_time, 'ranges': [sup_range], 'stepmode': 'fixed'}]
@@ -195,7 +184,7 @@ def main():
         tdump.close()
 
         # Finally, plot the trades that executed during the market session
-        plot_trades(trial_id)
+        # plot_trades(trial_id)
         
         trial += 1
 
