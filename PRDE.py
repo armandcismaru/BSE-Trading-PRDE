@@ -3,14 +3,17 @@ import numpy as np
 import csv
 import math
 import random
-import os
+import argparse
 
 from BSE import market_session
 
-# The next are helper functions that you will use later, if they don't make 
-# much sense now, don't worry too much about it they will become clearer later:
+parser = argparse.ArgumentParser(
+    description="Run market sessions on BSE",
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+)
+parser.add_argument("--experiment-type", default='default', type=str, help="Type of experiment")
+parser.add_argument("--k-value", default=4, type=int, help="Value of k")
 
-# Use this to plot trades of a single experiment
 def plot_trades(trial_id):
     prices_fname = trial_id + '_tape.csv'
     x = np.empty(0)
@@ -69,7 +72,6 @@ def getorderprice(i, sched, n, mode):
         orderprice = random.randint(pmin, pmax)
     return orderprice    
 
-# !!! Don't use on it's own
 def make_supply_demand_plot(bids, asks):
     # total volume up to current order
     volS = 0
@@ -143,9 +145,7 @@ def plot_offset_fn(offset_fn, total_time_seconds):
         offsets.append(offset_fn(i))
     plt.plot(x, offsets, 'x', color='black')  
 
-
-def main():
-    def schedule_offsetfn(t):
+def schedule_offsetfn(t):
         pi2 = math.pi * 2
         c = math.pi * 30
         wavelength = t / c
@@ -154,27 +154,16 @@ def main():
         offset = gradient + amplitude * math.sin(wavelength * t)
         return int(round(offset, 0))
 
-
-    n_days = 1.0 # 1000 days is good, but 3*365=1095, so may as well go for three years.
+def run_experiments(experiment_type, k_value, traders_spec):
+    n_days = 1.0
     start_time = 0.0
     end_time = 60.0 * 60.0 * 24 * n_days
-    duration = end_time - start_time
 
-    # First, configure the trader specifications
-    sellers_spec = [('PRDE', 30, {'k': 4, 's_min': -1.0, 's_max': +1.0})]
-    buyers_spec = [('PRDE', 30, {'k': 4, 's_min': -1.0, 's_max': +1.0})]
-    traders_spec = {'sellers':sellers_spec, 'buyers':buyers_spec}
-
-    # Next, confiure the supply and demand (and plot it)
     # sup_range = (95, 95, schedule_offsetfn)
     # dem_range = (105, 105, schedule_offsetfn)
-
     sup_range = (60, 60)
     dem_range = (140, 140)
 
-    plot_sup_dem(10, [sup_range], 10, [dem_range], 'fixed')
-
-    # Next, configure order schedules
     supply_schedule = [{'from': start_time, 'to': end_time, 'ranges': [sup_range], 'stepmode': 'fixed'}]
     demand_schedule = [{'from': start_time, 'to': end_time, 'ranges': [dem_range], 'stepmode': 'fixed'}]
 
@@ -185,23 +174,41 @@ def main():
     trial = 1
 
     while trial < (n_trials + 1):
-        trial_id = 'bse_d%03d_i%02d_%04d' % (n_days, order_interval, trial)
-        #completeName = os.path.join('../trial_data', fileName)
+        trial_id = '%s_k%02d_d%03d_i%02d_%04d' % (experiment_type, k_value, n_days, order_interval, trial)
         tdump = open(f'{trial_id}_avg_balance.csv','w')
         dump_all = True
         verbose = True
 
-        # Now, run the market session
         market_session(trial_id, start_time, end_time, traders_spec, order_sched, tdump, dump_all, verbose)
 
         tdump.close()
 
-        # Finally, plot the trades that executed during the market session
-        # plot_trades(trial_id)
-        
+        # plot_trades(trial_id) 
         trial += 1
 
-    # plot_sup_dem(10, [sup_range], 10, [dem_range], 'fixed')
+def main(args):
+    experiment_type = args.experiment_type
+
+    if experiment_type == 'default':
+        sellers_spec = [('PRDE', 30, {'k': 4, 's_min': -1.0, 's_max': +1.0})]
+        buyers_spec = sellers_spec
+        
+    elif experiment_type == 'oneToMany':
+        k_value = args.k_value
+        sellers_spec = [('PRDE', 1, {'k': k_value, 's_min': -1.0, 's_max': +1.0}), 
+                        ('PRDE', 29, {'k': 4, 's_min': -1.0, 's_max': +1.0})]
+
+        buyers_spec = [('PRDE', 30, {'k': 4, 's_min': -1.0, 's_max': +1.0})]
+    elif experiment_type == 'balancedGroups':
+        k_value = args.k_value
+        sellers_spec = [('PRDE', 15, {'k': k_value, 's_min': -1.0, 's_max': +1.0}), 
+                        ('PRDE', 15, {'k': 4, 's_min': -1.0, 's_max': +1.0})]
+
+        buyers_spec = [('PRDE', 15, {'k': 4, 's_min': -1.0, 's_max': +1.0}), 
+                       ('PRDE', 15, {'k': k_value, 's_min': -1.0, 's_max': +1.0})]
+
+    traders_spec = {'sellers': sellers_spec, 'buyers': buyers_spec}
+    run_experiments(experiment_type, k_value, traders_spec)
 
 if __name__ == "__main__":
-    main()
+    main(parser.parse_args())
