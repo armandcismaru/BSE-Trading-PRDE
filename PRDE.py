@@ -145,28 +145,41 @@ def plot_offset_fn(offset_fn, total_time_seconds):
 
 
 def main():
+    def schedule_offsetfn(t):
+        pi2 = math.pi * 2
+        c = math.pi * 30
+        wavelength = t / c
+        gradient = 100 * t / (c / pi2)
+        amplitude = 100 * t / (c / pi2)
+        offset = gradient + amplitude * math.sin(wavelength * t)
+        return int(round(offset, 0))
+
+
     n_days = 1.0 # 1000 days is good, but 3*365=1095, so may as well go for three years.
     start_time = 0.0
     end_time = 60.0 * 60.0 * 24 * n_days
     duration = end_time - start_time
 
     # First, configure the trader specifications
-    sellers_spec = [('PRDE', 10, {'k': 4, 's_min': -1.0, 's_max': +1.0})]
-    buyers_spec = [('ZIP', 10)]
+    sellers_spec = [('PRDE', 30, {'k': 4, 's_min': -1.0, 's_max': +1.0})]
+    buyers_spec = [('PRDE', 30, {'k': 4, 's_min': -1.0, 's_max': +1.0})]
     traders_spec = {'sellers':sellers_spec, 'buyers':buyers_spec}
 
     # Next, confiure the supply and demand (and plot it)
-    sup_range = (50, 190, schedule_offsetfn)
-    dem_range = (200, 300, schedule_offsetfn)
+    # sup_range = (95, 95, schedule_offsetfn)
+    # dem_range = (105, 105, schedule_offsetfn)
 
-    # plot_sup_dem(10, [sup_range], 10, [dem_range], 'fixed')
+    sup_range = (60, 60)
+    dem_range = (140, 140)
+
+    plot_sup_dem(10, [sup_range], 10, [dem_range], 'fixed')
 
     # Next, configure order schedules
     supply_schedule = [{'from': start_time, 'to': end_time, 'ranges': [sup_range], 'stepmode': 'fixed'}]
     demand_schedule = [{'from': start_time, 'to': end_time, 'ranges': [dem_range], 'stepmode': 'fixed'}]
 
     order_interval = 5
-    order_sched = {'sup': supply_schedule , 'dem': demand_schedule, 'interval': order_interval, 'timemode': 'drip-poisson'}
+    order_sched = {'sup': supply_schedule , 'dem': demand_schedule, 'interval': order_interval, 'timemode': 'drip-jitter'}
 
     n_trials = 1
     trial = 1
@@ -187,18 +200,6 @@ def main():
         # plot_trades(trial_id)
         
         trial += 1
-
-    def schedule_offsetfn(t):
-        pi2 = math.pi * 2
-        c = math.pi * 3000
-        wavelength = t / c
-        gradient = 100 * t / (c / pi2)
-        amplitude = 100 * t / (c / pi2)
-        offset = gradient + amplitude * math.sin(wavelength * t)
-        return int(round(offset, 0))
-
-    # sup_range = (50, 150)
-    # dem_range = (50, 150)
 
     # plot_sup_dem(10, [sup_range], 10, [dem_range], 'fixed')
 
