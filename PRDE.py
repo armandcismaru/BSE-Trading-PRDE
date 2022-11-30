@@ -193,13 +193,13 @@ def main(args):
         sellers_spec = [('PRDE', 30, {'k': 4, 's_min': -1.0, 's_max': +1.0})]
         buyers_spec = sellers_spec
         
-    elif experiment_type == 'oneToMany':
+    elif experiment_type == 'otm':
         k_value = args.k_value
         sellers_spec = [('PRDE', 1, {'k': k_value, 's_min': -1.0, 's_max': +1.0}), 
                         ('PRDE', 29, {'k': 4, 's_min': -1.0, 's_max': +1.0})]
 
         buyers_spec = [('PRDE', 30, {'k': 4, 's_min': -1.0, 's_max': +1.0})]
-    elif experiment_type == 'balancedGroups':
+    elif experiment_type == 'bgr':
         k_value = args.k_value
         sellers_spec = [('PRDE', 15, {'k': k_value, 's_min': -1.0, 's_max': +1.0}), 
                         ('PRDE', 15, {'k': 4, 's_min': -1.0, 's_max': +1.0})]

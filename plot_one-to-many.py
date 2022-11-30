@@ -2,7 +2,8 @@ import csv
 import matplotlib.pyplot as plt
 import numpy as np
 
-fileName = 'oneToMany_k05_d001_i05_0001_strats.csv'
+k_value = 10
+fileName = 'oneToMany_k%02d_d001_i05_0001_strats.csv' % (k_value)
 with open(fileName, 'r') as f:
     reader = csv.reader(f)
     many_y = []
@@ -27,6 +28,12 @@ with open(fileName, 'r') as f:
         # print('Avg PPS for all trades at time: ', row[1], 'is: ', (many_pps + defector_pps)/60)
         # print('--------------------------------------------')
 
+    for i in range(1, len(many_y)-1):
+        if many_y[i] == 0:
+            many_y[i] = (many_y[i-1] + many_y[i+1]) / 2
+        if defector_y[i] == 0:
+            defector_y[i] = (defector_y[i-1] + defector_y[i+1]) / 2
+    
     time = time / (60*60)
     fig, ax = plt.subplots()
     plt.ylabel('Profit per second')
@@ -44,5 +51,5 @@ with open(fileName, 'r') as f:
     plt.legend()
     plt.show() 
     
-    print('Avg PPS for many per agent: ', np.sum(many_y/59))
-    print('PPS for defector: ', np.sum(defector_y))
+    print('Avg PPS per delta_E for many per agent: ', (np.sum(many_y)/59) / 12)
+    print('Avg PPS per delta_E for defector: ', np.sum(defector_y) / 12)
