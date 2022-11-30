@@ -1913,7 +1913,7 @@ def market_session(sess_id, starttime, endtime, trader_spec, order_schedule, avg
 
     strat_dump = open(sess_id + '_strats.csv', 'w')
 
-    lobframes = open(sess_id + '_LOB_frames.csv', 'w')
+    # lobframes = open(sess_id + '_LOB_frames.csv', 'w')
     lobframes = None # this disables writing of the LOB frames (which can generate HUGE files)
 
     # initialise the exchange
@@ -2010,7 +2010,7 @@ def market_session(sess_id, starttime, endtime, trader_spec, order_schedule, avg
     if lobframes is not None:
             lobframes.close()
 
-    dump_all = True
+    # dump_all = False
 
     if dump_all:
 

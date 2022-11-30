@@ -157,14 +157,23 @@ def run_experiments(experiment_type, k_value, F_value, traders_spec):
     n_days = 1.0
     start_time = 0.0
     end_time = 60.0 * 60.0 * 24 * n_days
+    duration = end_time - start_time
 
-    # sup_range = (95, 95, schedule_offsetfn)
-    # dem_range = (105, 105, schedule_offsetfn)
-    sup_range = (60, 60)
-    dem_range = (140, 140)
+    # sup_range = (60, 60)
+    # dem_range = (140, 140)
 
-    supply_schedule = [{'from': start_time, 'to': end_time, 'ranges': [sup_range], 'stepmode': 'fixed'}]
-    demand_schedule = [{'from': start_time, 'to': end_time, 'ranges': [dem_range], 'stepmode': 'fixed'}]
+    range1 = (65, 140, schedule_offsetfn)
+    range2 = (200, 270, schedule_offsetfn)
+
+    
+    supply_schedule = [ {'from':start_time, 'to':duration/3, 'ranges':[range1], 'stepmode':'fixed'},
+                        {'from':duration/3, 'to':2*duration/3, 'ranges':[range2], 'stepmode':'fixed'},
+                        {'from':2*duration/3, 'to':end_time, 'ranges':[range1], 'stepmode':'fixed'}
+                        ]
+    demand_schedule = supply_schedule
+
+    # supply_schedule = [{'from': start_time, 'to': end_time, 'ranges': [sup_range], 'stepmode': 'fixed'}]
+    # demand_schedule = [{'from': start_time, 'to': end_time, 'ranges': [dem_range], 'stepmode': 'fixed'}]
 
     order_interval = 5
     order_sched = {'sup': supply_schedule , 'dem': demand_schedule, 'interval': order_interval, 'timemode': 'drip-jitter'}
@@ -175,14 +184,12 @@ def run_experiments(experiment_type, k_value, F_value, traders_spec):
     while trial < (n_trials + 1):
         trial_id = '%s_k%02d_F%2.2f_d%03d_%04d' % (experiment_type, k_value, F_value, n_days, trial)
         tdump = open(f'{trial_id}_avg_balance.csv','w')
-        dump_all = True
+        dump_all = False
         verbose = True
 
         market_session(trial_id, start_time, end_time, traders_spec, order_sched, tdump, dump_all, verbose)
 
         tdump.close()
-
-        # plot_trades(trial_id) 
         trial += 1
 
 def main(args):
