@@ -145,12 +145,13 @@ def plot_offset_fn(offset_fn, total_time_seconds):
     plt.plot(x, offsets, 'x', color='black')  
 
 def schedule_offsetfn(t):
+        t /= 100
         pi2 = math.pi * 2
-        c = math.pi * 30
+        c = math.pi * 3000
         wavelength = t / c
         gradient = 100 * t / (c / pi2)
-        amplitude = 100 * t / (c / pi2)
-        offset = gradient + amplitude * math.sin(wavelength * t)
+        amplitude = 100 / (c / pi2)
+        offset = gradient + amplitude * math.sin(wavelength)
         return int(round(offset, 0))
 
 def run_experiments(experiment_type, k_value, F_value, traders_spec):
@@ -162,8 +163,8 @@ def run_experiments(experiment_type, k_value, F_value, traders_spec):
     # sup_range = (60, 60)
     # dem_range = (140, 140)
 
-    range1 = (65, 140, schedule_offsetfn)
-    range2 = (200, 270, schedule_offsetfn)
+    range1 = (65, 140)
+    range2 = (200, 270)
 
     
     supply_schedule = [ {'from':start_time, 'to':duration/3, 'ranges':[range1], 'stepmode':'fixed'},

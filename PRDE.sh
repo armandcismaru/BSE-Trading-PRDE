@@ -12,4 +12,4 @@ module purge
 # load in the module dependencies for this script
 module load "languages/anaconda3/2021-3.8.8-cuda-11.1-pytorch"
 
-python PRDE.py --experiment-type bgr --k-value 4 --F-value 0.9
+python PRDE.py --experiment-type bgr --k-value 4 --F-value 1.2
