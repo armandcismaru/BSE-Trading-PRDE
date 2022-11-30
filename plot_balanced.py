@@ -3,7 +3,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 new_k = 4
-with open('bgr_k%02d_d001_i05_0001_strats.csv' % (new_k), 'r') as f:
+new_f = 1.2
+
+with open('bgr_k%02d_F%2.2f_d001_0001_strats.csv' % (new_k, new_f), 'r') as f:
     reader = csv.reader(f)
     base_y = []
     new_y = []
@@ -34,11 +36,15 @@ with open('bgr_k%02d_d001_i05_0001_strats.csv' % (new_k), 'r') as f:
         # print('PPS for buyer trades at time: ', row[1], 'is: ', buyer_pps)
         # print('--------------------------------------------')
 
-    for i in range(1, len(base_y)-1):
-            if base_y[i] == 0:
-                base_y[i] = (base_y[i-1] + base_y[i+1]) / 2
-            if new_y[i] == 0:
-                new_y[i] = (new_y[i-1] + new_y[i+1]) / 2
+
+    print(f'k={new_k} F={new_f} avg PPS for base per agent: ', (np.sum(base_y)/15)/12)
+    print(f'k={new_k} F={new_f} avg PPS for new per agent: ', (np.sum(new_y)/15)/12)
+
+    # for i in range(1, len(base_y)-1):
+    #         if base_y[i] == 0:
+    #             base_y[i] = (base_y[i-1] + base_y[i+1]) / 2
+    #         if new_y[i] == 0:
+    #             new_y[i] = (new_y[i-1] + new_y[i+1]) / 2
         
     # time = time / (60*60)
     # fig, ax = plt.subplots()
@@ -57,5 +63,4 @@ with open('bgr_k%02d_d001_i05_0001_strats.csv' % (new_k), 'r') as f:
     # plt.legend()
     # plt.show() 
 
-    print(f'k={new_k} avg PPS for base per agent: ', (np.sum(base_y)/15)/12)
-    print(f'k={new_k} avg PPS for new per agent: ', (np.sum(new_y)/15)/12)
+    
