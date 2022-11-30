@@ -12,4 +12,7 @@ module purge
 # load in the module dependencies for this script
 module load "languages/anaconda3/2021-3.8.8-cuda-11.1-pytorch"
 
-python PRDE.py --experiment-type oneToMany --k-value 5
+python PRDE.py --experiment-type balancedGroups --k-value 5
+python PRDE.py --experiment-type balancedGroups --k-value 7
+python PRDE.py --experiment-type balancedGroups --k-value 8
+python PRDE.py --experiment-type balancedGroups --k-value 10
