@@ -153,8 +153,8 @@ def schedule_offsetfn(t):
         offset = gradient + amplitude * math.sin(wavelength * t)
         return int(round(offset, 0))
 
-def run_experiments(experiment_type, k_value, traders_spec):
-    n_days = 7.0
+def run_experiments(experiment_type, k_value, F_value, traders_spec):
+    n_days = 1.0
     start_time = 0.0
     end_time = 60.0 * 60.0 * 24 * n_days
 
@@ -173,7 +173,7 @@ def run_experiments(experiment_type, k_value, traders_spec):
     trial = 1
 
     while trial < (n_trials + 1):
-        trial_id = '%s_k%02d_d%03d_i%02d_%04d' % (experiment_type, k_value, n_days, order_interval, trial)
+        trial_id = '%s_k%02d_F%2.2f_d%03d_%04d' % (experiment_type, k_value, F_value, n_days, trial)
         tdump = open(f'{trial_id}_avg_balance.csv','w')
         dump_all = True
         verbose = True
@@ -207,7 +207,7 @@ def main(args):
                        ('PRDE', 15, {'k': k_value, 'F': F_value, 's_min': -1.0, 's_max': +1.0})]
 
     traders_spec = {'sellers': sellers_spec, 'buyers': buyers_spec}
-    run_experiments(experiment_type, k_value, traders_spec)
+    run_experiments(experiment_type, k_value, F_value, traders_spec)
 
 if __name__ == "__main__":
     main(parser.parse_args())
