@@ -2,7 +2,7 @@ import csv
 import matplotlib.pyplot as plt
 import numpy as np
 
-k_value = 10
+k_value = 8
 fileName = 'oneToMany_k%02d_d001_i05_0001_strats.csv' % (k_value)
 with open(fileName, 'r') as f:
     reader = csv.reader(f)

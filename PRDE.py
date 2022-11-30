@@ -13,6 +13,7 @@ parser = argparse.ArgumentParser(
 )
 parser.add_argument("--experiment-type", default='default', type=str, help="Type of experiment")
 parser.add_argument("--k-value", default=4, type=int, help="Value of k")
+parser.add_argument("--F-value", default=0.8, type=float, help="Value of F")
 
 def plot_trades(trial_id):
     prices_fname = trial_id + '_tape.csv'
@@ -28,7 +29,6 @@ def plot_trades(trial_id):
 
     plt.plot(x, y, 'x', color='black') 
     
-# Use this to run an experiment n times and plot all trades
 def n_runs_plot_trades(n, trial_id, start_time, end_time, traders_spec, order_sched):
     x = np.empty(0)
     y = np.empty(0)
@@ -50,8 +50,7 @@ def n_runs_plot_trades(n, trial_id, start_time, end_time, traders_spec, order_sc
                 y = np.append(y,price)
 
     plt.plot(x, y, 'x', color='black');
-
-# !!! Don't use on it's own   
+   
 def getorderprice(i, sched, n, mode):
     pmin = min(sched[0][0], sched[0][1])
     pmax = max(sched[0][0], sched[0][1])
@@ -188,24 +187,24 @@ def run_experiments(experiment_type, k_value, traders_spec):
 
 def main(args):
     experiment_type = args.experiment_type
+    k_value = args.k_value
+    F_value = args.F_value
 
     if experiment_type == 'default':
-        sellers_spec = [('PRDE', 30, {'k': 4, 's_min': -1.0, 's_max': +1.0})]
+        sellers_spec = [('PRDE', 30, {'k': 4, 'F': 0.8, 's_min': -1.0, 's_max': +1.0})]
         buyers_spec = sellers_spec
         
     elif experiment_type == 'otm':
-        k_value = args.k_value
-        sellers_spec = [('PRDE', 1, {'k': k_value, 's_min': -1.0, 's_max': +1.0}), 
-                        ('PRDE', 29, {'k': 4, 's_min': -1.0, 's_max': +1.0})]
+        sellers_spec = [('PRDE', 1, {'k': k_value, 'F': F_value, 's_min': -1.0, 's_max': +1.0}), 
+                        ('PRDE', 29, {'k': 4, 'F': 0.8, 's_min': -1.0, 's_max': +1.0})]
 
-        buyers_spec = [('PRDE', 30, {'k': 4, 's_min': -1.0, 's_max': +1.0})]
+        buyers_spec = [('PRDE', 30, {'k': 4, 'F': 0.8, 's_min': -1.0, 's_max': +1.0})]
     elif experiment_type == 'bgr':
-        k_value = args.k_value
-        sellers_spec = [('PRDE', 15, {'k': k_value, 's_min': -1.0, 's_max': +1.0}), 
-                        ('PRDE', 15, {'k': 4, 's_min': -1.0, 's_max': +1.0})]
+        sellers_spec = [('PRDE', 15, {'k': k_value, 'F': F_value, 's_min': -1.0, 's_max': +1.0}), 
+                        ('PRDE', 15, {'k': 4, 'F': 0.8, 's_min': -1.0, 's_max': +1.0})]
 
-        buyers_spec = [('PRDE', 15, {'k': 4, 's_min': -1.0, 's_max': +1.0}), 
-                       ('PRDE', 15, {'k': k_value, 's_min': -1.0, 's_max': +1.0})]
+        buyers_spec = [('PRDE', 15, {'k': 4, 'F': 0.8, 's_min': -1.0, 's_max': +1.0}), 
+                       ('PRDE', 15, {'k': k_value, 'F': F_value, 's_min': -1.0, 's_max': +1.0})]
 
     traders_spec = {'sellers': sellers_spec, 'buyers': buyers_spec}
     run_experiments(experiment_type, k_value, traders_spec)
