@@ -2,8 +2,8 @@ import csv
 import matplotlib.pyplot as plt
 import numpy as np
 
-new_k = 5
-new_f = 0.7
+new_k = 8
+new_f = 1.6
 
 with open('bgr_k%02d_F%2.2f_d007_0001_strats.csv' % (new_k, new_f), 'r') as f:
     reader = csv.reader(f)
@@ -37,9 +37,9 @@ with open('bgr_k%02d_F%2.2f_d007_0001_strats.csv' % (new_k, new_f), 'r') as f:
         # print('--------------------------------------------')
 
 
-    print(f'k={new_k} F={new_f} avg PPS for base per agent: ', (np.sum(base_y)/15)/12)
-    print(f'k={new_k} F={new_f} avg PPS for new per agent: ', (np.sum(new_y)/15)/12)
-
+    print(f'k={new_k} F={new_f} avg PPS for base per agent: ', (np.sum(base_y)/15))
+    print(f'k={new_k} F={new_f} avg PPS for new per agent: ', (np.sum(new_y)/15))
+    print('Percentage increase: ', (np.sum(new_y)/15) / (np.sum(base_y)/15))
     # for i in range(1, len(base_y)-1):
     #         if base_y[i] == 0:
     #             base_y[i] = (base_y[i-1] + base_y[i+1]) / 2
