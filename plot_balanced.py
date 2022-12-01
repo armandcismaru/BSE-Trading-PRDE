@@ -2,10 +2,10 @@ import csv
 import matplotlib.pyplot as plt
 import numpy as np
 
-new_k = 4
-new_f = 1.2
+new_k = 5
+new_f = 0.7
 
-with open('bgr_k%02d_F%2.2f_d001_0001_strats.csv' % (new_k, new_f), 'r') as f:
+with open('bgr_k%02d_F%2.2f_d007_0001_strats.csv' % (new_k, new_f), 'r') as f:
     reader = csv.reader(f)
     base_y = []
     new_y = []
@@ -46,21 +46,21 @@ with open('bgr_k%02d_F%2.2f_d001_0001_strats.csv' % (new_k, new_f), 'r') as f:
     #         if new_y[i] == 0:
     #             new_y[i] = (new_y[i-1] + new_y[i+1]) / 2
         
-    # time = time / (60*60)
-    # fig, ax = plt.subplots()
-    # plt.ylabel('Profit per second')
-    # plt.xlabel('Time (in hours)') 
+    time = time / (60*60)
+    fig, ax = plt.subplots()
+    plt.ylabel('Profit per second')
+    plt.xlabel('Time (in hours)') 
 
-    # line, = ax.plot(time, base_y, 'r-')  
-    # line.set_label('base-profit')
+    line, = ax.plot(time, base_y, 'r-')  
+    line.set_label('base-profit')
 
-    # line, = ax.plot(time, new_y, 'b-')
-    # line.set_label('new-profit')
+    line, = ax.plot(time, new_y, 'b-')
+    line.set_label('new-profit')
 
-    # line, = ax.plot(time, base_y + new_y, 'g-')
-    # line.set_label('Total PPS')
+    line, = ax.plot(time, base_y + new_y, 'g-')
+    line.set_label('Total PPS')
 
-    # plt.legend()
-    # plt.show() 
+    plt.legend()
+    plt.show() 
 
     

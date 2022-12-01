@@ -14,7 +14,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument("--experiment-type", default='default', type=str, help="Type of experiment")
 parser.add_argument("--k-value", default=4, type=int, help="Value of k")
 parser.add_argument("--F-value", default=0.8, type=float, help="Value of F")
-parser.add_argument("--n-days", default=1, type=int, help="Number of days")
+parser.add_argument("--n-days", default=1.0, type=float, help="Number of days")
 
 def plot_trades(trial_id):
     prices_fname = trial_id + '_tape.csv'
@@ -165,8 +165,7 @@ def run_experiments(experiment_type, k_value, F_value, n_days, traders_spec):
 
     range1 = (65, 140)
     range2 = (200, 270)
-
-    
+  
     supply_schedule = [ {'from':start_time, 'to':duration/3, 'ranges':[range1], 'stepmode':'fixed'},
                         {'from':duration/3, 'to':2*duration/3, 'ranges':[range2], 'stepmode':'fixed'},
                         {'from':2*duration/3, 'to':end_time, 'ranges':[range1], 'stepmode':'fixed'}
@@ -216,6 +215,10 @@ def main(args):
                        ('PRDE', 15, {'k': k_value, 'F': F_value, 's_min': -1.0, 's_max': +1.0})]
 
     traders_spec = {'sellers': sellers_spec, 'buyers': buyers_spec}
+
+    # for fval in [round(i * 0.1, 2) for i in range(21)]: 
+    #     run_experiments(experiment_type, k_value, fval, n_days, traders_spec)
+
     run_experiments(experiment_type, k_value, F_value, n_days, traders_spec)
 
 if __name__ == "__main__":
