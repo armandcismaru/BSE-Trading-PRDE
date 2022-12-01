@@ -155,7 +155,7 @@ def schedule_offsetfn(t):
         return int(round(offset, 0))
 
 def run_experiments(experiment_type, k_value, F_value, traders_spec):
-    n_days = 1.0
+    n_days = 7.0
     start_time = 0.0
     end_time = 60.0 * 60.0 * 24 * n_days
     duration = end_time - start_time
@@ -165,8 +165,7 @@ def run_experiments(experiment_type, k_value, F_value, traders_spec):
 
     range1 = (65, 140)
     range2 = (200, 270)
-
-    
+  
     supply_schedule = [ {'from':start_time, 'to':duration/3, 'ranges':[range1], 'stepmode':'fixed'},
                         {'from':duration/3, 'to':2*duration/3, 'ranges':[range2], 'stepmode':'fixed'},
                         {'from':2*duration/3, 'to':end_time, 'ranges':[range1], 'stepmode':'fixed'}
@@ -215,7 +214,11 @@ def main(args):
                        ('PRDE', 15, {'k': k_value, 'F': F_value, 's_min': -1.0, 's_max': +1.0})]
 
     traders_spec = {'sellers': sellers_spec, 'buyers': buyers_spec}
-    run_experiments(experiment_type, k_value, F_value, traders_spec)
+
+    for fval in [round(i * 0.1, 2) for i in range(21)]: 
+        run_experiments(experiment_type, 5, fval, traders_spec)
+
+    # run_experiments(experiment_type, k_value, F_value, traders_spec)
 
 if __name__ == "__main__":
     main(parser.parse_args())
