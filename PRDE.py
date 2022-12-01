@@ -14,6 +14,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument("--experiment-type", default='default', type=str, help="Type of experiment")
 parser.add_argument("--k-value", default=4, type=int, help="Value of k")
 parser.add_argument("--F-value", default=0.8, type=float, help="Value of F")
+parser.add_argument("--n-days", default=1, type=int, help="Number of days")
 
 def plot_trades(trial_id):
     prices_fname = trial_id + '_tape.csv'
@@ -154,8 +155,7 @@ def schedule_offsetfn(t):
         offset = gradient + amplitude * math.sin(wavelength)
         return int(round(offset, 0))
 
-def run_experiments(experiment_type, k_value, F_value, traders_spec):
-    n_days = 1.0
+def run_experiments(experiment_type, k_value, F_value, n_days, traders_spec):
     start_time = 0.0
     end_time = 60.0 * 60.0 * 24 * n_days
     duration = end_time - start_time
@@ -197,6 +197,7 @@ def main(args):
     experiment_type = args.experiment_type
     k_value = args.k_value
     F_value = args.F_value
+    n_days = args.n_days
 
     if experiment_type == 'default':
         sellers_spec = [('PRDE', 30, {'k': 4, 'F': 0.8, 's_min': -1.0, 's_max': +1.0})]
@@ -215,7 +216,7 @@ def main(args):
                        ('PRDE', 15, {'k': k_value, 'F': F_value, 's_min': -1.0, 's_max': +1.0})]
 
     traders_spec = {'sellers': sellers_spec, 'buyers': buyers_spec}
-    run_experiments(experiment_type, k_value, F_value, traders_spec)
+    run_experiments(experiment_type, k_value, F_value, n_days, traders_spec)
 
 if __name__ == "__main__":
     main(parser.parse_args())
