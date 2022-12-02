@@ -2,7 +2,7 @@ import csv
 import matplotlib.pyplot as plt
 import numpy as np
 
-k_values = [4, 5]
+k_values = [4, 5, 6]
 F_values = [round(i * 0.1, 2) for i in range(21)]
 
 resdump = open('exp_results.csv', 'w')
