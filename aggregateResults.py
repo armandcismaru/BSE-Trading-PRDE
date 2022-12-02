@@ -2,10 +2,8 @@ import csv
 import matplotlib.pyplot as plt
 import numpy as np
 
-# k_values = [4, 5, 6, 7]
-# F_values = [round(i * 0.1, 2) for i in range(21)]
-k_values = [5]
-F_values = [0.00, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00, 1.1, 1.2]
+k_values = [4, 5]
+F_values = [round(i * 0.1, 2) for i in range(21)]
 
 resdump = open('exp_results.csv', 'w')
 n_eval_periods = 7 * 24 / 2
@@ -42,7 +40,11 @@ for kval in k_values:
                 # print('PPS for buyer trades at time: ', row[1], 'is: ', buyer_pps)
                 # print('--------------------------------------------')
 
-        resdump.write('%2.2f,' % ((np.sum(base_y)/15/n_eval_periods) / (np.sum(new_y)/15/n_eval_periods)))
+        # change = (np.sum(new_y)/15/n_eval_periods) / (np.sum(base_y)/15/n_eval_periods) - 1
+        nt = len(base_y) - 1
+        change = (new_y[nt]) / (base_y[nt]) - 1
+        
+        resdump.write('%2.3f,' % (change))
         # resdump.write('%2.3f,' % ((np.sum(base_y)/15/12) / (np.sum(new_y)/15/12)))
     resdump.write('\n')
 resdump.close()
