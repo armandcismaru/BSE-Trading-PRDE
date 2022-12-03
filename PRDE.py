@@ -182,7 +182,7 @@ def run_experiments(experiment_type, k_value, F_value, n_days, traders_spec):
     trial = 1
 
     while trial < (n_trials + 1):
-        trial_id = '%s_k%02d_F%2.2f_d%03d_%04d' % (experiment_type, k_value, F_value, n_days, trial)
+        trial_id = 'Trial2_k%02d_F%2.2f_d%03d_%04d' % (k_value, F_value, n_days, trial)
         tdump = open(f'{trial_id}_avg_balance.csv','w')
         dump_all = False
         verbose = True
