@@ -54,3 +54,4 @@ with open(fileName, 'r') as f:
     
     print('Avg PPS per delta_E for many per agent: ', (np.sum(many_y)/59) / 12)
     print('Avg PPS per delta_E for defector: ', np.sum(defector_y) / 12)
+    print('% increase: ', np.sum(defector_y) / (np.sum(many_y)/59))

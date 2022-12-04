@@ -163,7 +163,7 @@ def run_experiments(experiment_type, k_value, F_value, n_days, traders_spec):
     # sup_range = (60, 60)
     # dem_range = (140, 140)
 
-    range1 = (65, 180)
+    range1 = (65, 140)
     range2 = (200, 270)
   
     supply_schedule = [ {'from':start_time, 'to':duration/3, 'ranges':[range1], 'stepmode':'fixed'},
@@ -172,9 +172,6 @@ def run_experiments(experiment_type, k_value, F_value, n_days, traders_spec):
                         ]
     demand_schedule = supply_schedule
 
-    # supply_schedule = [{'from': start_time, 'to': end_time, 'ranges': [sup_range], 'stepmode': 'fixed'}]
-    # demand_schedule = [{'from': start_time, 'to': end_time, 'ranges': [dem_range], 'stepmode': 'fixed'}]
-
     order_interval = 5
     order_sched = {'sup': supply_schedule , 'dem': demand_schedule, 'interval': order_interval, 'timemode': 'drip-jitter'}
 
@@ -182,7 +179,7 @@ def run_experiments(experiment_type, k_value, F_value, n_days, traders_spec):
     trial = 1
 
     while trial < (n_trials + 1):
-        trial_id = 'final_%s_k%02d_F%2.2f_d%03d_%04d' % (experiment_type, k_value, F_value, n_days, trial)
+        trial_id = 'Trial2_k%02d_F%2.2f_d%03d_%04d' % (k_value, F_value, n_days, trial)
         tdump = open(f'{trial_id}_avg_balance.csv','w')
         dump_all = False
         verbose = True
@@ -216,10 +213,10 @@ def main(args):
 
     traders_spec = {'sellers': sellers_spec, 'buyers': buyers_spec}
 
-    # for fval in [0.9, 1.0, 1.1, 1.2]: 
-    #     run_experiments(experiment_type, k_value, fval, n_days, traders_spec)
+    for fval in [1.9, 2.0]: 
+        run_experiments(experiment_type, k_value, fval, n_days, traders_spec)
 
-    run_experiments(experiment_type, k_value, F_value, n_days, traders_spec)
+    # run_experiments(experiment_type, k_value, F_value, n_days, traders_spec)
 
 if __name__ == "__main__":
     main(parser.parse_args())

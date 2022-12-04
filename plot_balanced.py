@@ -2,9 +2,8 @@ import csv
 import matplotlib.pyplot as plt
 import numpy as np
 
-new_k = 6
-new_f = 0.2
-trial = 1
+new_k = 4
+new_f = 0.0
 
 def moving_average(arr, window_size):
     window_size = 2
@@ -20,7 +19,7 @@ def moving_average(arr, window_size):
 
     return moving_averages
 
-with open('k%02d_F%2.2f_d007_00%02d_strats.csv' % (new_k, new_f, trial), 'r') as f:
+with open('2bgr_k%02d_F%2.2f_d007_0001_strats.csv' % (new_k, new_f), 'r') as f:
     reader = csv.reader(f)
     base_y = []
     new_y = []
@@ -38,9 +37,9 @@ with open('k%02d_F%2.2f_d007_00%02d_strats.csv' % (new_k, new_f, trial), 'r') as
                         new_pps += float(row[k+1])
                 else:
                     if k > 109:
+                        new_pps += float(row[k+1])
+                    else:
                         base_pps += float(row[k+1])
-                    # else:
-                    #     new_pps += float(row[k+1])
 
         base_y = np.append(base_y, float(base_pps))
         new_y = np.append(new_y, float(new_pps))
@@ -73,11 +72,11 @@ with open('k%02d_F%2.2f_d007_00%02d_strats.csv' % (new_k, new_f, trial), 'r') as
     # change = (new_y[nt]) / (base_y[nt]) - 1
     # print('Percentage increase: ', change)
 
-    # for i in range(1, len(base_y)-1):
-    #         if base_y[i] == 0:
-    #             base_y[i] = (base_y[i-1] + base_y[i+1]) / 2
-    #         if new_y[i] == 0:
-    #             new_y[i] = (new_y[i-1] + new_y[i+1]) / 2
+    for i in range(1, len(base_y)-1):
+            if base_y[i] == 0:
+                base_y[i] = (base_y[i-1] + base_y[i+1]) / 2
+            if new_y[i] == 0:
+                new_y[i] = (new_y[i-1] + new_y[i+1]) / 2
     # print(len(base_y + new_y))
 
     time = time / (60*60)
