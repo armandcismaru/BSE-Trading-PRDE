@@ -216,7 +216,7 @@ def main(args):
 
     traders_spec = {'sellers': sellers_spec, 'buyers': buyers_spec}
 
-    for fval in [0.0, 0.1, 0.2]: 
+    for fval in [1.7, 1.8, 1.9, 2.0]: 
         run_experiments(experiment_type, k_value, fval, n_days, traders_spec)
 
     # run_experiments(experiment_type, k_value, F_value, n_days, traders_spec)
