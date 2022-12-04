@@ -2,10 +2,10 @@ import csv
 import matplotlib.pyplot as plt
 import numpy as np
 
-new_k = 5
-new_f = 1.6
+new_k = 4
+new_f = 1.9
 
-with open('bgr_k%02d_F%2.2f_d007_0001_strats.csv' % (new_k, new_f), 'r') as f:
+with open('2bgr_k%02d_F%2.2f_d007_0001_strats.csv' % (new_k, new_f), 'r') as f:
     reader = csv.reader(f)
     base_y = []
     new_y = []
@@ -23,9 +23,9 @@ with open('bgr_k%02d_F%2.2f_d007_0001_strats.csv' % (new_k, new_f), 'r') as f:
                         new_pps += float(row[k+1])
                 else:
                     if k > 109:
-                        base_pps += float(row[k+1])
-                    else:
                         new_pps += float(row[k+1])
+                    else:
+                        base_pps += float(row[k+1])
 
         base_y = np.append(base_y, float(base_pps))
         new_y = np.append(new_y, float(new_pps))
@@ -37,13 +37,13 @@ with open('bgr_k%02d_F%2.2f_d007_0001_strats.csv' % (new_k, new_f), 'r') as f:
         # print('--------------------------------------------')
 
 
-    # print(f'k={new_k} F={new_f} avg PPS for base per agent: ', (np.sum(base_y)/15))
-    # print(f'k={new_k} F={new_f} avg PPS for new per agent: ', (np.sum(new_y)/15))
-    # print('Percentage increase: ', (np.sum(new_y)/15) / (np.sum(base_y)/15))
+    print(f'k={new_k} F={new_f} avg PPS for base per agent: ', (np.sum(base_y)/15))
+    print(f'k={new_k} F={new_f} avg PPS for new per agent: ', (np.sum(new_y)/15))
+    print('Percentage increase: ', (np.sum(new_y)/15) / (np.sum(base_y)/15))
 
-    print(f'k={new_k} F={new_f} avg PPS for base per agent: ', (base_y[len(base_y)-1]))
-    print(f'k={new_k} F={new_f} avg PPS for new per agent: ', (new_y[len(base_y)-1]))
-    print('Percentage increase: ', (new_y[len(base_y)-1]) / (base_y[len(base_y)-1]))
+    # print(f'k={new_k} F={new_f} avg PPS for base per agent: ', (base_y[len(base_y)-1]))
+    # print(f'k={new_k} F={new_f} avg PPS for new per agent: ', (new_y[len(base_y)-1]))
+    # print('Percentage increase: ', (new_y[len(base_y)-1]) / (base_y[len(base_y)-1]))
 
     # for i in range(1, len(base_y)-1):
     #         if base_y[i] == 0:

@@ -182,7 +182,7 @@ def run_experiments(experiment_type, k_value, F_value, n_days, traders_spec):
     trial = 1
 
     while trial < (n_trials + 1):
-        trial_id = '%s_k%02d_F%2.2f_d%03d_%04d' % (experiment_type, k_value, F_value, n_days, trial)
+        trial_id = '2bgr%s_k%02d_F%2.2f_d%03d_%04d' % (experiment_type, k_value, F_value, n_days, trial)
         tdump = open(f'{trial_id}_avg_balance.csv','w')
         dump_all = False
         verbose = True
@@ -216,10 +216,10 @@ def main(args):
 
     traders_spec = {'sellers': sellers_spec, 'buyers': buyers_spec}
 
-    # for fval in [0.9, 1.0, 1.1, 1.2]: 
-    #     run_experiments(experiment_type, k_value, fval, n_days, traders_spec)
+    for fval in [1.9, 2.0]: 
+        run_experiments(experiment_type, k_value, fval, n_days, traders_spec)
 
-    run_experiments(experiment_type, k_value, F_value, n_days, traders_spec)
+    # run_experiments(experiment_type, k_value, F_value, n_days, traders_spec)
 
 if __name__ == "__main__":
     main(parser.parse_args())
