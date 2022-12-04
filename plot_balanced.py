@@ -30,15 +30,15 @@ with open('2bgr_k%02d_F%2.2f_d007_0001_strats.csv' % (new_k, new_f), 'r') as f:
         new_pps = 0
         for k, elem in enumerate(row):
             if 'actvprof' in elem:
-                if k > 212:
-                    if k > 319:
+                if k > 212: # SELLERS
+                    if k > 319: # weak half
+                        new_pps += float(row[k+1])
+                    else: # strong half
                         base_pps += float(row[k+1])
-                    else:
+                else: # BUYERS
+                    if k > 109: # strong half
                         new_pps += float(row[k+1])
-                else:
-                    if k > 109:
-                        new_pps += float(row[k+1])
-                    else:
+                    else: # weak half
                         base_pps += float(row[k+1])
 
         base_y = np.append(base_y, float(base_pps))
