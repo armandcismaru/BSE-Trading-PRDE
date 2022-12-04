@@ -163,7 +163,7 @@ def run_experiments(experiment_type, k_value, F_value, n_days, traders_spec):
     # sup_range = (60, 60)
     # dem_range = (140, 140)
 
-    range1 = (65, 140)
+    range1 = (65, 180)
     range2 = (200, 270)
   
     supply_schedule = [ {'from':start_time, 'to':duration/3, 'ranges':[range1], 'stepmode':'fixed'},
@@ -182,7 +182,7 @@ def run_experiments(experiment_type, k_value, F_value, n_days, traders_spec):
     trial = 1
 
     while trial < (n_trials + 1):
-        trial_id = 'Trial2_k%02d_F%2.2f_d%03d_%04d' % (k_value, F_value, n_days, trial)
+        trial_id = 'final_%s_k%02d_F%2.2f_d%03d_%04d' % (experiment_type, k_value, F_value, n_days, trial)
         tdump = open(f'{trial_id}_avg_balance.csv','w')
         dump_all = False
         verbose = True
@@ -208,8 +208,8 @@ def main(args):
 
         buyers_spec = [('PRDE', 30, {'k': 4, 'F': 0.8, 's_min': -1.0, 's_max': +1.0})]
     elif experiment_type == 'bgr':
-        sellers_spec = [('PRDE', 15, {'k': k_value, 'F': F_value, 's_min': -1.0, 's_max': +1.0}), 
-                        ('PRDE', 15, {'k': 4, 'F': 0.8, 's_min': -1.0, 's_max': +1.0})]
+        sellers_spec = [('PRDE', 15, {'k': 4, 'F': 0.8, 's_min': -1.0, 's_max': +1.0}), 
+                        ('PRDE', 15, {'k': k_value, 'F': F_value, 's_min': -1.0, 's_max': +1.0})]
 
         buyers_spec = [('PRDE', 15, {'k': 4, 'F': 0.8, 's_min': -1.0, 's_max': +1.0}), 
                        ('PRDE', 15, {'k': k_value, 'F': F_value, 's_min': -1.0, 's_max': +1.0})]

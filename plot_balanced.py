@@ -2,8 +2,9 @@ import csv
 import matplotlib.pyplot as plt
 import numpy as np
 
-new_k = 4
-new_f = 1.2
+new_k = 6
+new_f = 0.2
+trial = 1
 
 def moving_average(arr, window_size):
     window_size = 2
@@ -19,7 +20,7 @@ def moving_average(arr, window_size):
 
     return moving_averages
 
-with open('Trial5_k%02d_F%2.2f_d007_0001_strats.csv' % (new_k, new_f), 'r') as f:
+with open('k%02d_F%2.2f_d007_00%02d_strats.csv' % (new_k, new_f, trial), 'r') as f:
     reader = csv.reader(f)
     base_y = []
     new_y = []
@@ -38,8 +39,8 @@ with open('Trial5_k%02d_F%2.2f_d007_0001_strats.csv' % (new_k, new_f), 'r') as f
                 else:
                     if k > 109:
                         base_pps += float(row[k+1])
-                    else:
-                        new_pps += float(row[k+1])
+                    # else:
+                    #     new_pps += float(row[k+1])
 
         base_y = np.append(base_y, float(base_pps))
         new_y = np.append(new_y, float(new_pps))
@@ -96,6 +97,6 @@ with open('Trial5_k%02d_F%2.2f_d007_0001_strats.csv' % (new_k, new_f), 'r') as f
     line.set_label('Total PPS')
 
     plt.legend()
-    #plt.show() 
+    plt.show() 
 
     
