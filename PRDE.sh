@@ -14,4 +14,4 @@ module load "languages/anaconda3/2021-3.8.8-cuda-11.1-pytorch"
 
 python PRDE.py --experiment-type bgr --k-value 4 --F-value 1.2
 
-python3 PRDE.py --experiment-type bgr --k-value 6 --n-days 7
+python3 PRDE.py --experiment-type bgr --k-value 4 --n-days 7
