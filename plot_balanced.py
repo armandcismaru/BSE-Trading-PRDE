@@ -1,9 +1,11 @@
 import csv
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
+from PRDE import plot_sup_dem
 
 new_k = 4
-new_f = 1.8
+new_f = 0.8
 
 def moving_average(arr, window_size):
     i = 0
@@ -18,11 +20,12 @@ def moving_average(arr, window_size):
 
     return moving_averages
 
-with open('Final_k%02d_F%2.2f_d007_0001_strats.csv' % (new_k, new_f), 'r') as f:
+with open('bgr_k%02d_F%2.2f_d007_0001_strats.csv' % (new_k, new_f), 'r') as f:
     reader = csv.reader(f)
     base_y = []
     new_y = []
     time = []
+    last = []
 
     for row in reader:
         base_pps = 0
@@ -33,6 +36,9 @@ with open('Final_k%02d_F%2.2f_d007_0001_strats.csv' % (new_k, new_f), 'r') as f:
                     new_pps += float(row[k+1])
                 else:
                     base_pps += float(row[k+1])
+            if row[1] == '601200':
+                if 'actvprof' in elem:
+                    last.append(float(row[k+1]))
 
         base_y = np.append(base_y, float(base_pps))
         new_y = np.append(new_y, float(new_pps))
@@ -60,20 +66,29 @@ with open('Final_k%02d_F%2.2f_d007_0001_strats.csv' % (new_k, new_f), 'r') as f:
     time = time / (60*60)
     time = time[:-7]
 
-    fig, ax = plt.subplots()
-    plt.ylabel('Profit per second')
-    plt.xlabel('Time (in hours)') 
+    # fig, ax = plt.subplots()
+    # plt.ylabel('Profit per second')
+    # plt.xlabel('Time (in hours)') 
 
-    line, = ax.plot(time, base_y, 'r-')  
-    line.set_label('base-profit')
+    # line, = ax.plot(time, base_y, 'r-')  
+    # line.set_label('base-profit')
 
-    line, = ax.plot(time, new_y, 'b-')
-    line.set_label('new-profit')
+    # line, = ax.plot(time, new_y, 'b-')
+    # line.set_label('new-profit')
  
-    line, = ax.plot(time, [base_y[i] + new_y[i] for i in range(len(base_y))], 'g-')
-    line.set_label('Total PPS')
+    # line, = ax.plot(time, [base_y[i] + new_y[i] for i in range(len(base_y))], 'g-')
+    # line.set_label('Total PPS')
 
-    plt.legend()
-    plt.show() 
+    # plt.legend()
+    #plt.show() 
 
-    
+    #plot_sup_dem(12, [(65,190)], 12, [(65,190)], 'fixed')
+   
+    x_axis = [i for i in range(0, 60)]
+    fig, ax = plt.subplots()
+    ax.plot(x_axis, last, color="gray")
+    ax.axvline(x=len(x_axis) / 2, color="red")
+
+    plt.xlabel('Buyer/Seller')
+    plt.ylabel('Profit per second') 
+    plt.show()
