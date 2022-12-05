@@ -192,7 +192,7 @@ def main(args):
     F_value = args.F_value
     n_days = args.n_days
 
-    if experiment_type == 'default':
+    if experiment_type == 'hmg':
         sellers_spec = [('PRDE', 30, {'k': 4, 'F': 0.8, 's_min': -1.0, 's_max': +1.0})]
         buyers_spec = sellers_spec
         
@@ -216,7 +216,7 @@ def main(args):
 
     traders_spec = {'sellers': sellers_spec, 'buyers': buyers_spec}
 
-    for fval in [1.7, 1.8, 1.9, 2.0]: 
+    for fval in [1.2, 1.3, 1.4, 1.5]: 
         run_experiments(experiment_type, k_value, fval, n_days, traders_spec)
 
     # run_experiments(experiment_type, k_value, F_value, n_days, traders_spec)
