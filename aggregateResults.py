@@ -16,7 +16,7 @@ def moving_average(arr, window_size):
 
     return moving_averages
 
-k_values = [4, 5, 6]
+k_values = [4, 5, 6, 7]
 F_values = [round(i * 0.1, 2) for i in range(21)]
 
 resdump = open('exp_results.csv', 'w')
@@ -27,23 +27,17 @@ for kval in k_values:
         base_y = []
         new_y = []
         time = []
-        with open('bgr_k%02d_F%2.2f_d007_0001_strats.csv' % (kval, f), 'r') as file:
+        with open('Final_k%02d_F%2.2f_d007_0001_strats.csv' % (kval, f), 'r') as file:
             reader = csv.reader(file)
             for row in reader:
                 base_pps = 0
                 new_pps = 0
                 for k, elem in enumerate(row):
                     if 'actvprof' in elem:
-                        if k > 212:
-                            if k > 319:
-                                base_pps += float(row[k+1])
-                            else:
-                                new_pps += float(row[k+1])
+                        if k % 2 == 0:
+                            new_pps += float(row[k+1])
                         else:
-                            if k > 109:
-                                base_pps += float(row[k+1])
-                            else:
-                                new_pps += float(row[k+1])
+                            base_pps += float(row[k+1])
 
                 base_y = np.append(base_y, float(base_pps))
                 new_y = np.append(new_y, float(new_pps))
