@@ -1,11 +1,9 @@
 import csv
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
-from PRDE import plot_sup_dem
 
 new_k = 4
-new_f = 0.8
+new_f = 1.6
 
 def moving_average(arr, window_size):
     i = 0
@@ -20,7 +18,7 @@ def moving_average(arr, window_size):
 
     return moving_averages
 
-with open('bgr_k%02d_F%2.2f_d007_0001_strats.csv' % (new_k, new_f), 'r') as f:
+with open('Trial_k%02d_F%2.2f_d07_14_strats.csv' % (new_k, new_f), 'r') as f:
     reader = csv.reader(f)
     base_y = []
     new_y = []
@@ -50,9 +48,9 @@ with open('bgr_k%02d_F%2.2f_d007_0001_strats.csv' % (new_k, new_f), 'r') as f:
         # print('--------------------------------------------')
 
 
-    print(f'k={new_k} F={new_f} avg PPS for base per agent: ', (np.sum(base_y)/15))
-    print(f'k={new_k} F={new_f} avg PPS for new per agent: ', (np.sum(new_y)/15))
-    print('Percentage increase: ', (np.sum(new_y)/15) / (np.sum(base_y)/15) - 1)
+    print(f'k={new_k} F={new_f} avg PPS for base per agent: ', (np.sum(base_y)/12))
+    print(f'k={new_k} F={new_f} avg PPS for new per agent: ', (np.sum(new_y)/12))
+    print('Percentage increase: ', (np.sum(new_y)/12) / (np.sum(base_y)/12) - 1)
 
     for i in range(1, len(base_y)-1):
             if base_y[i] == 0:
@@ -84,11 +82,11 @@ with open('bgr_k%02d_F%2.2f_d007_0001_strats.csv' % (new_k, new_f), 'r') as f:
 
     #plot_sup_dem(12, [(65,190)], 12, [(65,190)], 'fixed')
    
-    x_axis = [i for i in range(0, 60)]
-    fig, ax = plt.subplots()
-    ax.plot(x_axis, last, color="gray")
-    ax.axvline(x=len(x_axis) / 2, color="red")
+    # x_axis = [i for i in range(0, 60)]
+    # fig, ax = plt.subplots()
+    # ax.plot(x_axis, last, color="gray")
+    # ax.axvline(x=len(x_axis) / 2, color="red")
 
-    plt.xlabel('Buyer/Seller')
-    plt.ylabel('Profit per second') 
-    plt.show()
+    # plt.xlabel('Buyer/Seller')
+    # plt.ylabel('Profit per second') 
+    # plt.show()

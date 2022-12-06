@@ -16,18 +16,18 @@ def moving_average(arr, window_size):
 
     return moving_averages
 
-k_values = [4, 5, 6, 7]
+k_values = [4] #, 5, 6, 7]
 F_values = [round(i * 0.1, 2) for i in range(21)]
 
 resdump = open('exp_results.csv', 'w')
 n_eval_periods = 7 * 24 / 2
 
 for kval in k_values:
-    for f in F_values:
+    for trial in [i for i in range(1,28)]:
         base_y = []
         new_y = []
         time = []
-        with open('Final_k%02d_F%2.2f_d007_0001_strats.csv' % (kval, f), 'r') as file:
+        with open('Trial_k%02d_F%2.2f_d07_%02d_strats.csv' % (kval, 1.8, trial), 'r') as file:
             reader = csv.reader(file)
             for row in reader:
                 base_pps = 0
