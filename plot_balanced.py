@@ -2,7 +2,7 @@ import csv
 import matplotlib.pyplot as plt
 import numpy as np
 
-new_k = 4
+new_k = 6
 new_f = 1.6
 
 def moving_average(arr, window_size):
@@ -18,7 +18,7 @@ def moving_average(arr, window_size):
 
     return moving_averages
 
-with open('Trial_k%02d_F%2.2f_d07_14_strats.csv' % (new_k, new_f), 'r') as f:
+with open('Trial_k%02d_F%2.2f_d007_0004_strats.csv' % (new_k, new_f), 'r') as f:
     reader = csv.reader(f)
     base_y = []
     new_y = []
