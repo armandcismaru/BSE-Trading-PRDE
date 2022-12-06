@@ -20,6 +20,10 @@ k_values = [4, 5, 6, 7]
 F_values = [round(i * 0.1, 2) for i in range(21)]
 
 resdump = open('exp_results.csv', 'w')
+for f in F_values:
+    resdump.write('F%2.2f,' % f)
+resdump.write('\n')
+
 n_eval_periods = 7 * 24 / 2
 
 for kval in k_values:
