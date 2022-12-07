@@ -1286,7 +1286,7 @@ class Trader_PRZI(Trader):
                     sys.exit('FAIL: self.diffevol[\'de_state\'] not recognized')
 
         elif self.optmzr == 'PRJADE':
-            # only initiate diff-evol once the active strat has been evaluated for long enough
+            # only initiate JADE once the active strat has been evaluated for long enough
             actv_lifetime = time - self.strats[self.active_strat]['start_t']
             if actv_lifetime >= self.strat_wait_time:
 
@@ -1307,8 +1307,7 @@ class Trader_PRZI(Trader):
                     self.jade['de_state'] = 'active_snew'
 
                 elif self.jade['de_state'] == 'active_snew':
-                    # now we've evaluated s_0 and s_new, so we can do DE adaptive step
-                  
+                    # now we've evaluated s_0 and s_new, so we can do JADE adaptive step
                     i_0 = self.jade['s0_index']
                     i_new = self.jade['snew_index']
                     fit_0 = self.strats[i_0]['pps']
@@ -1330,8 +1329,6 @@ class Trader_PRZI(Trader):
                     if F_i >= 1:
                         F_i = 1
 
-                    # pick four individual strategies at random, but they must be distinct
-                    
                     # select the best strategy
                     best_p =  self.k * self.jade['p']
                     sbest_index = 0

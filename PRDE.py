@@ -162,23 +162,26 @@ def run_experiments(experiment_type, k_value, F_value, n_days, traders_spec):
 
     # range1 = (65, 190)
     # range2 = (200, 270)
-    range1 = (65, 65)
+
+    range1 = (60, 60)
     range2 = (140, 140)
+
     # supply_schedule = [ {'from':start_time, 'to':duration/3, 'ranges':[range1], 'stepmode':'fixed'},
     #                     {'from':duration/3, 'to':2*duration/3, 'ranges':[range2], 'stepmode':'fixed'},
     #                     {'from':2*duration/3, 'to':end_time, 'ranges':[range1], 'stepmode':'fixed'}
     #                     ]
+
     supply_schedule = [{'from':start_time, 'to':end_time, 'ranges':[range1], 'stepmode':'fixed'}]
     demand_schedule = [{'from':start_time, 'to':end_time, 'ranges':[range2], 'stepmode':'fixed'}]
 
     order_interval = 5
     order_sched = {'sup': supply_schedule , 'dem': demand_schedule, 'interval': order_interval, 'timemode': 'drip-jitter'}
 
-    n_trials = 1
-    trial = 1
+    n_trials = 16
+    trial = 13
 
     while trial < (n_trials + 1):
-        trial_id = '{}_k%02d_F%2.2f_d%02d_%02d' % (k_value, F_value, n_days, trial)
+        trial_id = '%s_k%02d_F%2.2f_d%02d_%02d' % (experiment_type, k_value, F_value, n_days, trial)
         tdump = open(f'{trial_id}_avg_balance.csv','w')
         dump_all = False
         verbose = True
@@ -195,8 +198,18 @@ def main(args):
     n_days = args.n_days
 
     if experiment_type == 'jade':
-        sellers_spec = [('PRJADE', 20, {'k': 4, 'F': 0.8, 's_min': -1.0, 's_max': +1.0})]
+        trader = 'PRJADE'
+        n_traders = 12
+        sellers_spec = []
+
+        for i in range(n_traders):
+            if i % 2 == 0:
+                sellers_spec.append((trader, 1, {'k': 4, 'F': 0.8, 's_min': -1.0, 's_max': +1.0}))
+            else:
+                sellers_spec.append((trader, 1, {'k': 4, 'F': 0.8, 's_min': -1.0, 's_max': +1.0}))
+        print(sellers_spec)
         buyers_spec = sellers_spec
+
     if experiment_type == 'hmg':
         sellers_spec = [('PRDE', 20, {'k': 4, 'F': 1.8, 's_min': -1.0, 's_max': +1.0})]
         buyers_spec = sellers_spec
@@ -220,10 +233,6 @@ def main(args):
         buyers_spec = sellers_spec
 
     traders_spec = {'sellers': sellers_spec, 'buyers': buyers_spec}
-
-    # for fval in [1.2, 1.3, 1.4, 1.5]: 
-    #     run_experiments(experiment_type, k_value, fval, n_days, traders_spec)
-
     run_experiments(experiment_type, k_value, F_value, n_days, traders_spec)
 
 if __name__ == "__main__":
