@@ -3,7 +3,7 @@ import numpy as np
 
 resdump = open('stats_test.csv', 'w')
 resdump.write('new_profits,base_profits\n')
-trials = 22
+trials = 28
 
 for trial in range(trials):
     base_y = []

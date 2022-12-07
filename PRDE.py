@@ -160,23 +160,25 @@ def run_experiments(experiment_type, k_value, F_value, n_days, traders_spec):
     end_time = 60.0 * 60.0 * 24 * n_days
     duration = end_time - start_time
 
-    range1 = (65, 190)
-    range2 = (200, 270)
-  
-    supply_schedule = [ {'from':start_time, 'to':duration/3, 'ranges':[range1], 'stepmode':'fixed'},
-                        {'from':duration/3, 'to':2*duration/3, 'ranges':[range2], 'stepmode':'fixed'},
-                        {'from':2*duration/3, 'to':end_time, 'ranges':[range1], 'stepmode':'fixed'}
-                        ]
-    demand_schedule = supply_schedule
+    # range1 = (65, 190)
+    # range2 = (200, 270)
+    range1 = (65, 65)
+    range2 = (140, 140)
+    # supply_schedule = [ {'from':start_time, 'to':duration/3, 'ranges':[range1], 'stepmode':'fixed'},
+    #                     {'from':duration/3, 'to':2*duration/3, 'ranges':[range2], 'stepmode':'fixed'},
+    #                     {'from':2*duration/3, 'to':end_time, 'ranges':[range1], 'stepmode':'fixed'}
+    #                     ]
+    supply_schedule = [{'from':start_time, 'to':end_time, 'ranges':[range1], 'stepmode':'fixed'}]
+    demand_schedule = [{'from':start_time, 'to':end_time, 'ranges':[range2], 'stepmode':'fixed'}]
 
     order_interval = 5
     order_sched = {'sup': supply_schedule , 'dem': demand_schedule, 'interval': order_interval, 'timemode': 'drip-jitter'}
 
-    n_trials = 16
-    trial = 15
+    n_trials = 1
+    trial = 1
 
     while trial < (n_trials + 1):
-        trial_id = 'Trial_k%02d_F%2.2f_d%02d_%02d' % (k_value, F_value, n_days, trial)
+        trial_id = '{}_k%02d_F%2.2f_d%02d_%02d' % (k_value, F_value, n_days, trial)
         tdump = open(f'{trial_id}_avg_balance.csv','w')
         dump_all = False
         verbose = True
@@ -192,8 +194,11 @@ def main(args):
     F_value = args.F_value
     n_days = args.n_days
 
+    if experiment_type == 'jade':
+        sellers_spec = [('PRJADE', 20, {'k': 4, 'F': 0.8, 's_min': -1.0, 's_max': +1.0})]
+        buyers_spec = sellers_spec
     if experiment_type == 'hmg':
-        sellers_spec = [('PRDE', 30, {'k': 4, 'F': 0.8, 's_min': -1.0, 's_max': +1.0})]
+        sellers_spec = [('PRDE', 20, {'k': 4, 'F': 1.8, 's_min': -1.0, 's_max': +1.0})]
         buyers_spec = sellers_spec
         
     elif experiment_type == 'otm':

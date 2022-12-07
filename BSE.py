@@ -52,6 +52,8 @@ import sys
 import math
 import random
 import time as chrono
+from scipy.stats import cauchy
+import numpy as np
 
 # a bunch of system constants (globals)
 bse_sys_minprice = 1                    # minimum price in the system, in cents/pennies
@@ -699,6 +701,16 @@ class Trader_PRZI(Trader):
                          'F': self.F                          # differential weight -- usually between 0 and 2
         }
 
+        self.jade = {'de_state': 'active_s0',          # initial state: strategy 0 is active (being evaluated)
+                    's0_index': self.active_strat,    # s0 starts out as active strat
+                    'snew_index': self.k,             # (k+1)th item of strategy list is DE's new strategy
+                    'snew_stratval': None,            # assigned later
+                    'miu_F': 0.5,                          # differential weight -- usually between 0 and 2
+                    'c': 0.1,
+                    'S_F': [0.8],
+                    'p': 0.2,
+                    'A': []
+        }
         start_time = time
         profit = 0.0
         profit_per_second = 0
@@ -718,9 +730,12 @@ class Trader_PRZI(Trader):
                 elif self.optmzr == 'PRDE':
                     # differential evolution: seed initial strategies across whole space
                     strategy = self.mutate_strat(self.strats[0]['stratval'], 'uniform_bounded_range')
+                elif self.optmzr == 'PRJADE':
+                    # JADE
+                    strategy = self.mutate_strat(self.strats[0]['stratval'], 'uniform_bounded_range')
                 else:
                     sys.exit('bad self.optmzr when initializing PRZI strategies')
-            self.strats.append({'stratval': strategy, 'start_t': start_time,
+            self.strats.append({'stratval': strategy, 'start_t': start_time, 'F': 0.8,
                                 'profit': profit, 'pps': profit_per_second, 'lut_bid': lut_bid, 'lut_ask': lut_ask})
 
         if self.params == 'landscape-mapper':
@@ -1270,6 +1285,118 @@ class Trader_PRZI(Trader):
                 else:
                     sys.exit('FAIL: self.diffevol[\'de_state\'] not recognized')
 
+        elif self.optmzr == 'PRJADE':
+            # only initiate diff-evol once the active strat has been evaluated for long enough
+            actv_lifetime = time - self.strats[self.active_strat]['start_t']
+            if actv_lifetime >= self.strat_wait_time:
+
+                if self.k < 4:
+                    sys.exit('FAIL: k too small for diffevol')
+
+                if self.jade['de_state'] == 'active_s0':
+                    # we've evaluated s0, so now we need to evaluate s_new
+                    self.active_strat = self.jade['snew_index']
+                    self.strats[self.active_strat]['start_t'] = time
+                    self.strats[self.active_strat]['profit'] = 0.0
+                    self.strats[self.active_strat]['pps'] = 0.0
+
+                    while(len(self.jade['A']) > self.k):
+                        self.jade['A'].pop(random.randrange(len(self.jade['A'])))
+
+                    self.jade['miu_F'] = (1 - self.jade['c']) * self.jade['miu_F'] + self.jade['c'] * (np.sum([a*b for a,b in zip(self.jade['S_F'],self.jade['S_F'])])/(np.sum(self.jade['S_F'])))
+                    self.jade['de_state'] = 'active_snew'
+
+                elif self.jade['de_state'] == 'active_snew':
+                    # now we've evaluated s_0 and s_new, so we can do DE adaptive step
+                  
+                    i_0 = self.jade['s0_index']
+                    i_new = self.jade['snew_index']
+                    fit_0 = self.strats[i_0]['pps']
+                    fit_new = self.strats[i_new]['pps']
+                    
+                    if fit_new >= fit_0:
+                        # new strat did better than old strat0, so overwrite new into strat0
+                        self.strats[i_0]['stratval'] = self.strats[i_new]['stratval']
+                        self.strats[i_0]['F'] = self.strats[i_new]['F']
+                        self.jade['S_F'].append(self.strats[i_new]['F'])
+                        self.jade['A'].append(self.strats[i_0]['stratval'])
+
+                    # do JADE
+                    F_i = cauchy.rvs(loc=self.jade['miu_F'], scale=0.1)
+
+                    while F_i <= 0:
+                        F_i = cauchy.rvs(loc=self.jade['miu_F'], scale=0.1)
+
+                    if F_i >= 1:
+                        F_i = 1
+
+                    # pick four individual strategies at random, but they must be distinct
+                    
+                    # select the best strategy
+                    best_p =  self.k * self.jade['p']
+                    sbest_index = 0
+                    for i in range(0, self.k):
+                        if self.strats[i]['profit'] > self.strats[sbest_index]['profit']:
+                            sbest_index = i
+
+                    stratlist = list(range(0, self.k))    # create sequential list of strategy-numbers
+                    random.shuffle(stratlist)             # shuffle the list
+
+                    # s0 is next iteration's candidate for possible replacement
+                    self.jade['s0_index'] = stratlist[0]
+
+                    stratlist_vals = [self.strats[i]['stratval'] for i in stratlist]
+                    P_A = stratlist_vals + self.jade['A']
+
+                    # s1, s2 used in JADE to create new strategy, potential replacement for s0
+                    s1_index = stratlist[1]
+
+                    # unpack the actual strategy values
+                    sbest_stratval = self.strats[sbest_index]['stratval']
+                    s1_stratval = self.strats[s1_index]['stratval']
+                    s2_stratval = random.choice(P_A)
+                    while(s2_stratval == s1_stratval):
+                        s2_stratval = random.choice(P_A)
+
+                    # this is the JADE "adaptive step": create a new individual
+                    new_stratval = self.strats[self.jade['s0_index']]['stratval'] + F_i * (sbest_stratval - self.strats[self.jade['s0_index']]['stratval']) + F_i * (s1_stratval - s2_stratval)
+
+                    # clip to bounds
+                    new_stratval = max(-1, min(+1, new_stratval))
+
+                    # record it for future use (s0 will be evaluated first, then s_new)
+                    self.strats[self.jade['snew_index']]['stratval'] = new_stratval
+                    self.strats[self.jade['snew_index']]['F'] = F_i
+
+                    # DC's intervention for fully converged populations
+                    # is the stddev of the strategies in the population equal/close to zero?
+                    sum = 0.0
+                    for s in range(self.k):
+                        sum += self.strats[s]['stratval']
+                    strat_mean = sum / self.k
+                    sumsq = 0.0
+                    for s in range(self.k):
+                        diff = self.strats[s]['stratval'] - strat_mean
+                        sumsq += (diff * diff)
+                    strat_stdev = math.sqrt(sumsq / self.k)
+                    
+                    if strat_stdev < 0.0001:
+                        # this population has converged
+                        # mutate one strategy at random
+                        randindex = random.randint(0, self.k - 1)
+                        self.strats[randindex]['stratval'] = random.uniform(-1.0, +1.0)
+                        
+                    # set up next iteration: first evaluate s0
+                    self.active_strat = self.jade['s0_index']
+                    self.strats[self.active_strat]['start_t'] = time
+                    self.strats[self.active_strat]['profit'] = 0.0
+                    self.strats[self.active_strat]['pps'] = 0.0
+
+                    self.jade['de_state'] = 'active_s0'
+
+                else:
+                    sys.exit('FAIL: self.diffevol[\'de_state\'] not recognized')
+
         elif self.optmzr is None:
             # this is PRZI -- nonadaptive, no optimizer, nothing to change here.
             pass
@@ -1557,6 +1684,8 @@ def populate_market(traders_spec, traders, shuffle, verbose):
             return Trader_PRZI('PRSH', name, balance, parameters, time0)
         elif robottype == 'PRDE':
             return Trader_PRZI('PRDE', name, balance, parameters, time0)
+        elif robottype == 'PRJADE':
+            return Trader_PRZI('PRJADE', name, balance, parameters, time0)
         else:
             sys.exit('FATAL: don\'t know robot type %s\n' % robottype)
 
@@ -1575,7 +1704,7 @@ def populate_market(traders_spec, traders, shuffle, verbose):
     def unpack_params(trader_params, mapping):
         # unpack the parameters for PRZI-family of strategies
         parameters = None
-        if ttype == 'PRSH' or ttype == 'PRDE' or ttype == 'PRZI':
+        if ttype == 'PRSH' or ttype == 'PRDE' or ttype == 'PRZI' or ttype == 'PRJADE':
             # parameters matter...
             if mapping:
                 parameters = 'landscape-mapper'
@@ -1586,6 +1715,9 @@ def populate_market(traders_spec, traders, shuffle, verbose):
                                   'strat_min': trader_params['s_min'], 'strat_max': trader_params['s_max']}
                 elif ttype == 'PRDE':
                     parameters = {'optimizer': 'PRDE', 'k': trader_params['k'], 'F': trader_params['F'],
+                                  'strat_min': trader_params['s_min'], 'strat_max': trader_params['s_max']}
+                elif ttype == 'PRJADE':
+                    parameters = {'optimizer': 'PRJADE', 'k': trader_params['k'], 'F': trader_params['F'],
                                   'strat_min': trader_params['s_min'], 'strat_max': trader_params['s_max']}
                 else: # ttype=PRZI
                     parameters = {'optimizer': None, 'k': 1,
@@ -1858,7 +1990,7 @@ def market_session(sess_id, starttime, endtime, trader_spec, order_schedule, avg
             trader = trdrs[t]
 
             # print('PRSH/PRDE recording, t=%s' % trader)
-            if trader.ttype == 'PRSH' or trader.ttype == 'PRDE':
+            if trader.ttype == 'PRSH' or trader.ttype == 'PRDE' or trader.ttype == 'PRJADE':
                 line_str += 'id=,%s, %s,' % (trader.tid, trader.ttype)
 
                 # line_str += 'bal=$,%f, n_trades=,%d, n_strats=,2, ' % (trader.balance, trader.n_trades)
