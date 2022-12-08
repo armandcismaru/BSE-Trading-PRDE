@@ -1,6 +1,7 @@
 import csv
 import matplotlib.pyplot as plt
 import numpy as np
+from PRDE import plot_trades
 
 new_k = 4
 new_f = 0.8
@@ -22,7 +23,7 @@ all = []
 is_this_for_jade = True
 
 for i in range(1,2):
-    with open('jade_k%02d_F%2.2f_d07_%02d_strats.csv' % (new_k, new_f, 1), 'r') as f:
+    with open('jade_k%02d_F%2.2f_d07_%02d_strats.csv' % (new_k, new_f, 23), 'r') as f:
         reader = csv.reader(f)
         base_y = []
         new_y = []
@@ -52,11 +53,6 @@ for i in range(1,2):
             new_y = np.append(new_y, float(new_pps))
             time = np.append(time, float(row[1]))
 
-            # print('PPS for all trades at time: ', row[1], 'is: ', seller_pps + buyer_pps)
-            # print('PPS for seller trades at time: ', row[1], 'is: ', seller_pps)
-            # print('PPS for buyer trades at time: ', row[1], 'is: ', buyer_pps)
-            # print('--------------------------------------------')
-
 
         print(f'k={new_k} F={new_f} avg PPS for base per agent: ', (np.sum(base_y)/12))
         print(f'k={new_k} F={new_f} avg PPS for new per agent: ', (np.sum(new_y)/12))
@@ -71,21 +67,21 @@ for i in range(1,2):
             if new_y[i] == 0:
                 new_y[i] = (new_y[i-1] + new_y[i+1]) / 2
     
-    # base_y = moving_average(base_y, 8)
-    # new_y = moving_average(new_y, 8)
-
+    base_y = moving_average(base_y, 8)
+    new_y = moving_average(new_y, 8)
+    
     time = time / (60*60)
-    # time = time[:-7]
+    time = time[:-7]
 
     fig, ax = plt.subplots()
     plt.ylabel('Profit per second')
     plt.xlabel('Time (in hours)') 
 
     line, = ax.plot(time, base_y, 'r-')  
-    line.set_label('Reference profit')
+    line.set_label('PRDE profis')
 
     line, = ax.plot(time, new_y, 'b-')
-    line.set_label('New profit')
+    line.set_label('JADE profits')
  
     line, = ax.plot(time, [base_y[i] + new_y[i] for i in range(len(base_y))], 'g-')
     line.set_label('Total profits')

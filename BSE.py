@@ -1318,6 +1318,7 @@ class Trader_PRZI(Trader):
                         self.strats[i_0]['stratval'] = self.strats[i_new]['stratval']
                         self.strats[i_0]['F'] = self.strats[i_new]['F']
                         self.jade['S_F'].append(self.strats[i_new]['F'])
+                    else:
                         self.jade['A'].append(self.strats[i_0]['stratval'])
 
                     # do JADE
