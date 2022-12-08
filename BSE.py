@@ -1329,7 +1329,8 @@ class Trader_PRZI(Trader):
                     if F_i >= 1:
                         F_i = 1
 
-                    # select the best strategy
+                    # select the p-best strategy, our k is too small for picking the standard p=0.05
+                    # so we use p=0.25 which equals to selecting the one best strategy
                     best_p =  self.k * self.jade['p']
                     sbest_index = 0
                     for i in range(0, self.k):
@@ -1351,9 +1352,9 @@ class Trader_PRZI(Trader):
                     # unpack the actual strategy values
                     sbest_stratval = self.strats[sbest_index]['stratval']
                     s1_stratval = self.strats[s1_index]['stratval']
-                    s2_stratval = random.choice(P_A)
-                    while(s2_stratval == s1_stratval):
-                        s2_stratval = random.choice(P_A)
+
+                    random.shuffle(P_A)
+                    s2_stratval = P_A[0]
 
                     # this is the JADE "adaptive step": create a new individual
                     new_stratval = self.strats[self.jade['s0_index']]['stratval'] + F_i * (sbest_stratval - self.strats[self.jade['s0_index']]['stratval']) + F_i * (s1_stratval - s2_stratval)

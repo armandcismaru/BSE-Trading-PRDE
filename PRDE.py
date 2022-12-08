@@ -177,9 +177,8 @@ def run_experiments(experiment_type, k_value, F_value, n_days, traders_spec):
     order_interval = 5
     order_sched = {'sup': supply_schedule , 'dem': demand_schedule, 'interval': order_interval, 'timemode': 'drip-jitter'}
 
-    n_trials = 16
-    trial = 13
-
+    n_trials = 1
+    trial = 1
     while trial < (n_trials + 1):
         trial_id = '%s_k%02d_F%2.2f_d%02d_%02d' % (experiment_type, k_value, F_value, n_days, trial)
         tdump = open(f'{trial_id}_avg_balance.csv','w')
@@ -198,19 +197,18 @@ def main(args):
     n_days = args.n_days
 
     if experiment_type == 'jade':
-        trader = 'PRJADE'
         n_traders = 12
         sellers_spec = []
 
         for i in range(n_traders):
             if i % 2 == 0:
-                sellers_spec.append((trader, 1, {'k': 4, 'F': 0.8, 's_min': -1.0, 's_max': +1.0}))
+                sellers_spec.append(('PRJADE', 1, {'k': 4, 'F': 0.8, 's_min': -1.0, 's_max': +1.0}))
             else:
-                sellers_spec.append((trader, 1, {'k': 4, 'F': 0.8, 's_min': -1.0, 's_max': +1.0}))
+                sellers_spec.append(('PRDE', 1, {'k': 4, 'F': 0.8, 's_min': -1.0, 's_max': +1.0}))
         print(sellers_spec)
         buyers_spec = sellers_spec
 
-    if experiment_type == 'hmg':
+    elif experiment_type == 'hmg':
         sellers_spec = [('PRDE', 20, {'k': 4, 'F': 1.8, 's_min': -1.0, 's_max': +1.0})]
         buyers_spec = sellers_spec
         

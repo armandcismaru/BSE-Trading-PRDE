@@ -19,8 +19,10 @@ def moving_average(arr, window_size):
     return moving_averages
 
 all = []
+is_this_for_jade = True
+
 for i in range(1,2):
-    with open('JADE_k%02d_F%2.2f_d01_%02d_strats.csv' % (new_k, new_f, i), 'r') as f:
+    with open('jade_k%02d_F%2.2f_d07_%02d_strats.csv' % (new_k, new_f, 1), 'r') as f:
         reader = csv.reader(f)
         base_y = []
         new_y = []
@@ -31,14 +33,20 @@ for i in range(1,2):
             base_pps = 0
             new_pps = 0
             for k, elem in enumerate(row):
-                if 'actvprof' in elem:
-                    if k % 2 == 0:
-                        new_pps += float(row[k+1])
-                    else:
-                        base_pps += float(row[k+1])
-                if row[1] == '601200':
+                if is_this_for_jade:
+                    if 'PRJADE' in elem:
+                        new_pps += float(row[k+4])
+                    elif 'PRDE' in elem:
+                        base_pps += float(row[k+4])
+                else:
                     if 'actvprof' in elem:
-                        last.append(float(row[k+1]))
+                        if k % 2 == 0:
+                            new_pps += float(row[k+1])
+                        else:
+                            base_pps += float(row[k+1])
+                    if row[1] == '601200':
+                        if 'actvprof' in elem:
+                            last.append(float(row[k+1]))
 
             base_y = np.append(base_y, float(base_pps))
             new_y = np.append(new_y, float(new_pps))
