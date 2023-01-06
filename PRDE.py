@@ -11,7 +11,7 @@ parser = argparse.ArgumentParser(
     description="Run market sessions on BSE",
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 )
-parser.add_argument("--experiment-type", default='default', type=str, help="Type of experiment")
+parser.add_argument("--experiment-type", default='bgr', type=str, help="Type of experiment")
 parser.add_argument("--k-value", default=4, type=int, help="Value of k")
 parser.add_argument("--F-value", default=0.8, type=float, help="Value of F")
 parser.add_argument("--n-days", default=1.0, type=float, help="Number of days")
