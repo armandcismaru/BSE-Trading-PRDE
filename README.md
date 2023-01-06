@@ -6,7 +6,10 @@ Link to the [report](ieft_report_fz19792.pdf).
 
 ## Running instructions:
 
-All the simulations are performed by running PRDE.py.
+All the simulations are performed by running PRDE.py. 
+### Requirements: 
+- python3
+- numpy, matplotlib for plotting
 
 The following command line flags are being used to specify simulation details:
 - `--experiment-type` indicates the experiment to execute, namely:
@@ -18,3 +21,7 @@ The following command line flags are being used to specify simulation details:
 - `--k-value` takes an `int` for the parameter `k` of DE
 - `--F-value` takes a `float` for the parameter `F` of DE
 - `--n-days` takes a `float` that specifies the number of days that the simulation will run
+
+An example on running balanced group tests with `k=5` & `F=0.9` for a one day market would be:
+
+`python PRDE.py --experiment-type bgr --k-value 5 --F-value 0.9 --n-days 1`
